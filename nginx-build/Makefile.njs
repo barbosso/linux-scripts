@@ -124,6 +124,11 @@ openssl: openssl.tar.gz
 	mv openssl*/ $@
 	touch $@
 
+openssl/build: openssl
+	cd openssl && ./config --prefix=$(LIB_DIR) && make && make all install
+	echo "$(LIB_DIR)/lib64" > /etc/ld.so.conf.d/openssl3.conf && ldconfig
+	cd ..
+
 zlib.tar.gz:
 	wget -O $@ $(ZLIB_SOURCE)
 
@@ -131,11 +136,6 @@ zlib: zlib.tar.gz
 	tar xf $<
 	mv zlib*/ $@
 	touch $@
-
-openssl/build: openssl
-	cd openssl && ./config --prefix=$(LIB_DIR) && make && make all install
-	echo "$(LIB_DIR)/lib64" > /etc/ld.so.conf.d/openssl3.conf && ldconfig
-	cd ..
 
 build:
 	mkdir -p $(LIB_DIR)
